@@ -1,0 +1,54 @@
+#!/usr/bin/expect
+
+log_user 1
+
+set timeout 0
+
+set user "your_username"
+
+set password "your_password"
+
+set sensor(1,ip) 10.1.1.1
+set sensor(1,name) sensor1
+set sensor(2,ip) 10.1.1.2
+set sensor(2,name) sensor2
+
+set cmd_list {
+		"show e a p 23:00"
+	}
+
+send_user "\n\nStarting up now...\n\n"
+
+    set num 1
+    while {$num < 3} {
+
+        # Connect
+        spawn ssh $user@$sensor($num,ip)
+
+    	set timeout 15
+
+		expect "?assword"
+		send "$password\r"
+
+        set prompt "(.*#)"
+
+        foreach command $cmd_list {
+            if {$command != ""} {
+                expect -re $prompt {
+					send "$command\r"
+                }
+            }
+        }
+    
+		expect -re "evIdsAlert" {
+			send_user "\n\n$sensor($num,name) has produced at least 1 alert in the past 23 hours\n\n"
+		}
+
+        expect -re $prompt {
+            send -- "exit\r"
+        }
+		incr num
+        close
+    }
+
+send_user "\n\nAll done.\n\n"
