@@ -1,0 +1,7 @@
+These scripts use expect to spawn an ssh session, log into Cisco IDS/IPS sensors, run some commands, and print some output.
+
+In this case these scripts are running a command which shows how many alerts the sensor has processed in the past 23 hours.
+
+I wrote the .exp expect script first. 
+I wanted to play with Python and see what it would look like in Python so I wrote the .py script next.
+I wanted to see if I could get the .exp expect script to output IP address AND hostname so I added an array.
