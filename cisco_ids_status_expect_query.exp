@@ -1,8 +1,6 @@
-#!/usr/bin/expect
+#!/usr/bin/env expect
 
-# Use xterm not xterm-color
-# I can't figure out how to make this work
-# export TERM=xterm
+# In Mac OS X run this script in a terminal window/tab using the emulation xterm not xterm-color
 
 # log_user
 # 1 Displays device output and scripted send_user output
