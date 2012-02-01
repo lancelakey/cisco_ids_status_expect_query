@@ -1,0 +1,73 @@
+#!/usr/bin/expect
+
+# Use xterm not xterm-color
+# I can't figure out how to make this work
+# export TERM=xterm
+
+# log_user
+# 1 Displays device output and scripted send_user output
+# 0 Displays only scripted send_user output
+log_user 1
+
+set timeout 5 
+
+set user "your_username"
+
+set password "your_password"
+
+# set ip_list
+# Array of IP addresses you want the script to act on
+set ip_list {
+    10.1.1.1
+    10.1.1.2
+    10.1.1.3
+    10.1.1.4
+    10.1.1.5
+    }
+
+# set cmd_list
+# Array of commands you want to send to each IP address
+set cmd_list {
+    "show e a p 23:00"
+    }
+
+send_user "Starting up now...\n"
+
+# foreach ip $ip_list
+# For each IP address
+# Open an ssh session
+# Send a password when prompted for a password
+# Send a command when greeted with a prompt
+# If the command output includes evIdsAlert print $ip has produced alerts message
+foreach ip $ip_list {
+    if {$ip != ""} {
+
+        # Connect
+        spawn ssh $user@$ip
+
+    expect "?assword*"
+    send "$password\r"
+
+        set prompt "(.*#)"
+
+        foreach command $cmd_list {
+            if {$command != ""} {
+                expect -re $prompt {
+          send "$command\r"
+                }
+            }
+        }
+
+    expect -re "evIdsAlert" {
+      send_user "$ip has produced at least 1 alert in the past 23 hours\n"
+    }
+
+        expect -re $prompt {
+            send -- "exit\r"
+        }
+
+        close
+    }
+}
+
+send_user "All done.\n"
